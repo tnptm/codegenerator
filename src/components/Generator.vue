@@ -18,9 +18,17 @@ const fieldValues = ref({
 //const emit = defineEmits(['inFocus', 'submit'])
 
 const resultCode = computed(()=>{
-    return JSON.stringify(resultJsonObj.value)
-})
+    if (activeResult.value === 'json'){
+        return JSON.stringify(resultJsonObj.value)
+    } else {
+        let formcode = JSON.stringify(resultJsonObj.value)
+        formcode = formcode.replaceAll('[','(|')
+        formcode = formcode.replaceAll(']','|)')
+        return formcode
+    }
 
+})
+const activeResult = ref('json')
 const types= [
             {
                 type: "text",
@@ -43,7 +51,7 @@ const types= [
             },
         ];
 
-const resultHtml = computed(()=>{
+/*const resultHtml = computed(()=>{
     if (resultJsonObj && false){
         return '\
             <div class="form-item">\
@@ -56,7 +64,7 @@ const resultHtml = computed(()=>{
     } 
     return "";
 })
-
+*/
 
 const addItemState = ref(
     {
@@ -245,8 +253,15 @@ function handleDataChange(data){
             
             </div>
         </div>
-        <label for="jsoncode" class="block mt-4">JSON:</label>
-        <textarea id="jsoncode" class="w-4/5 h-fit m-auto border bg-green-100 p-2" placeholder="Generated code goes here..">{{ resultCode }}</textarea>
+        <label for="jsoncode" class="block mt-4">
+            <button @click="activeResult = 'json'" class="border p-2" :class="`${ (activeResult=='json') ? 'bg-blue-400 text-white shadow' : 'bg-blue-200' }`">
+                JSON
+            </button>
+            <button @click="activeResult = 'form'" class="border p-2" v-bind:class="`${(activeResult=='form') ? 'bg-blue-400 text-white shadow' : 'bg-blue-200'}`">
+                Form-Code
+            </button>
+        </label>
+        <textarea id="jsoncode" class="w-4/5 h-52 m-auto border bg-green-100 p-2" placeholder="Generated code goes here..">{{ resultCode }}</textarea>
     </div>
     <div>valuelist: {{ tempValList.map((data)=>data.stringval).join(', ') }}</div>
     

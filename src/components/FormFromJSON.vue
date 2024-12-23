@@ -2,7 +2,7 @@
     <!--<div v-html="defJsonObj">-->
     <div v-for="item in defJsonObj" :key="item.name" class="bg-blue-50 h-fit my-3 flex">
         <div class="w-4/5 transition block border border-slate-300 p-3 rounded-lg hover:border-slate-500 hover:shadow-lg">
-            <div>{{ item.label }}</div>
+            <div class="text-lg font-semibold">{{ item.label }}</div>
             <input v-if="item.type == 'text'" 
                 :type="item.type" 
                 class="border block p-2 ml-4 rounded" 
@@ -53,7 +53,7 @@ export default {
             this.$emit('updateData',data)
         }, 
     },
-    computed: {
+    /*computed: {
         htmlObjs() {
             let result = ""
             if (!this.defJsonObj){
@@ -94,6 +94,6 @@ export default {
             }
          
         }
-    },
+    },*/
 }
 </script>
