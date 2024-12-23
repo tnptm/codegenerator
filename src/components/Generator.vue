@@ -1,7 +1,7 @@
 <script setup>
 import ValueList from './ValueList.vue';
 import FormFromJSON from './FormFromJSON.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, } from 'vue';
 
 //import {ref} from VueElement
 //const resultCode = ref("")
@@ -14,6 +14,8 @@ const fieldValues = ref({
     label: "",
     placeholder: ""
 })
+
+//const emit = defineEmits(['inFocus', 'submit'])
 
 const resultCode = computed(()=>{
     return JSON.stringify(resultJsonObj.value)
@@ -96,18 +98,99 @@ function addItem(){
         selectedObj.values = tempValList.value.map(item => item.stringval )
     }
     selectedObj.name = `property-${itemsInJson}` // add last in the list
+    selectedObj.id = itemsInJson
     
     resultJsonObj.value.push(selectedObj)
 
 }
 
+function handleDataChange(data){
+    let realIndex = null
+    let newData = []
+    switch (data.action) {
+        case 'delete' :
+
+            //alert("Delete!")
+            console.log(resultJsonObj.value[data.elm])
+            for (let i=0; i<resultJsonObj.value.length; i++){
+                
+                if (resultJsonObj.value[i].id == data.elm){
+                    
+                    let c = confirm(`Do you want to delete item labeled: ${resultJsonObj.value[i].label} (${i + 1})?`)
+                    if (c) {
+                        resultJsonObj.value.splice(i,1)
+                    }
+                    break;
+                }
+            }
+            break;
+        case 'up':
+            for (let i=0; i<resultJsonObj.value.length; i++){
+                if (resultJsonObj.value[i].id == data.elm){
+                    realIndex = i
+                    break;
+                }
+            }
+            if (realIndex === 0){
+                // can not move up
+                alert("Can not move more up!")
+            } else {
+
+                for (let i=0; i<resultJsonObj.value.length; i++){
+                    if (i==realIndex-1){
+                        newData.push({...resultJsonObj.value[i+1]})
+                    } else if (i==realIndex){
+                        newData.push({...resultJsonObj.value[i-1]})
+                    }
+                    else {
+                        newData.push({...resultJsonObj.value[i]})
+                    }
+                }
+                resultJsonObj.value = [ ...newData ]
+            }
+             
+            
+            break;
+        case 'down':
+            for (let i=0; i<resultJsonObj.value.length; i++){
+                if (resultJsonObj.value[i].id == data.elm){
+                    realIndex = i
+                    break;
+                }
+            }
+            if (realIndex === resultJsonObj.value.length-1){
+                // can not move down
+                alert("Can not move more down!")
+            } else {
+
+                for (let i=0; i<resultJsonObj.value.length; i++){
+                    if (i==realIndex+1){
+                        newData.push({...resultJsonObj.value[i-1]})
+                    } else if (i==realIndex){
+                        newData.push({...resultJsonObj.value[i+1]})
+                    }
+                    else {
+                        newData.push({...resultJsonObj.value[i]})
+                    }
+                }
+                resultJsonObj.value = [ ...newData ]
+            }
+             
+            break;
+        case 'edit':
+            alert("Not implemneted. Tip: Remove and create new item!")
+            break;
+    }
+    //resultJsonObj
+}
+
 </script>
 
 <template>
-    <div class="w-4/5 m-auto">
-        <div class="font-bold">Code Generator</div>
-        <div id="model-container" class="p-4 bg-blue-100">
-            <FormFromJSON :defJsonObj="resultJsonObj"></FormFromJSON>
+    <div class="w-4/5 m-auto ">
+        <div class="font-bold h-6"> </div>
+        <div id="model-container" class="p-4 bg-blue-100  rounded-lg shadow">
+            <FormFromJSON :defJsonObj="resultJsonObj" v-on:update-data="handleDataChange"></FormFromJSON>
         </div>
         
         <div class="block">
@@ -117,7 +200,7 @@ function addItem(){
             </button>
 
         </div>
-        <div class="bg-neutral-50 border border-gray-200 block mx-2 px-2 w-fit" v-bind:class="`${ (newItemFormOpen ) ? '' : 'h-0 opacity-0' }`">
+        <div class="bg-neutral-50 border shadow-lg border-gray-200 block mx-2 px-4 rounded w-fit" v-bind:class="`${ (newItemFormOpen ) ? '' : 'h-0 opacity-0' }`">
             <div>
                 <div class="flex">
                     <div class="p-2 w-28 font-semibold">Type: </div>
@@ -150,7 +233,7 @@ function addItem(){
                     
                     <div class="flex mt-1" v-if="newType != 'text'">
                         <div class="p-2 w-28 font-semibold">Values: </div>
-                        <div><ValueList v-on:updateValList="handleValuesUpdate"></ValueList></div>
+                        <div><ValueList v-on:update-val-list="handleValuesUpdate"></ValueList></div>
                     </div>
                 </div>
             </div>
