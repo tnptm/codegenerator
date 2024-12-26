@@ -1,6 +1,6 @@
 <template>
     <!--<div v-html="defJsonObj">-->
-    <div v-for="item in defJsonObj" :key="item.name" class="bg-blue-50 h-fit my-3 flex">
+    <div v-for="item in defJsonObj" :key="item.name" class="bg-blue-50 h-fit my-3 flex rounded-lg">
         <div class="w-4/5 transition block border border-slate-300 p-3 rounded-lg hover:border-slate-500 hover:shadow-lg">
             <div class="text-lg font-semibold">{{ item.label }}</div>
             <input v-if="item.type == 'text'" 

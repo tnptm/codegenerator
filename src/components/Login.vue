@@ -1,39 +1,62 @@
 <script setup>
-//import { VueElement } from 'vue';
-import { ref, computed } from 'vue'
+import { ref, onMounted, onBeforeMount} from 'vue'
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore()
 
 const props = defineProps(['LoginState'])
 
-//const isLoggedIn = computed(()=> authStore.isLoggedIn)
-
-const msg = ref("")
-
-//const emit = defineEmits(['onLogin'])
-
-const userData = ref([
-    {
-        un: "test",
-        pw: "1234"
-    }
-])
-
 const usernm = ref("")
 const passwd = ref("")
 
+const msg = ref("")
+const apiUrl = ref("")
 
-function handleLogin(){
+onMounted(()=>{
+  if (import.meta.env.DEV){
+    apiUrl.value = import.meta.env.VITE_API_PATH_DEV
+  } else {
+    apiUrl.value = import.meta.env.VITE_API_PATH
+  }
+})
+
+async function handleLogin(){
+    // 
+    try {
+        const response = await fetch(`${apiUrl.value}/auth.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: usernm.value,
+            password: passwd.value,
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            authStore.login(usernm.value)
+            msg.value = "Login successful!";
+          // Redirect or perform further actions
+        } else {
+          msg.value = data.message;
+        }
+    } catch (error) {
+        msg.value = "An error occurred. Please try again. (" + error + ")";
+        console.error(error);
+    }
+    
+}
+
+
+
+function OldhandleLogin(){
     if (userData.value.find((u) => { return u.un === usernm.value && u.pw === passwd.value })){
         authStore.login()
-        //isLoggedIn.value = true
         //emit('onLogin',true)
         msg.value = "Logged in"
     } else {
-
-        authStore.login()
-        //emit('onLogin',false)
         msg.value = "Try again"
     }
 }

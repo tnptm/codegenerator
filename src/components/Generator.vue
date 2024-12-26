@@ -208,12 +208,12 @@ function handleDataChange(data){
             </button>
 
         </div>
-        <div class="bg-neutral-50 border shadow-lg border-gray-200 block mx-2 px-4 rounded w-fit" v-bind:class="`${ (newItemFormOpen ) ? '' : 'h-0 opacity-0' }`">
+        <div class="bg-neutral-50 border shadow-lg border-gray-200 block mx-2 px-4 rounded w-fit" v-bind:class="`${ (newItemFormOpen ) ? '' : 'h-0 invisible' }`">
             <div>
                 <div class="flex">
                     <div class="p-2 w-28 font-semibold">Type: </div>
                     <div class="p-2">
-                        <select name="type" v-model="newType" class="mx-2 p-2" placeholder="Select type">
+                        <select name="type" v-model="newType" class="mx-2 p-2 rounded border border-gray-300" placeholder="Select type">
                             
                             <option v-for="item in types" :key="item.type">{{ item.type }}</option>
                         </select>
@@ -223,7 +223,7 @@ function handleDataChange(data){
                     <div class="flex mt-1">
                         <div class="p-2 w-28 font-semibold">Title: </div>
                         <input type="text" 
-                            lass="ml-2 border block px-2 py-1" 
+                            class="ml-2 rounded-md border block px-2 py-1" 
                             name="label" 
                             placeholder="Item title.." 
                             v-model="fieldValues.label"
@@ -233,13 +233,13 @@ function handleDataChange(data){
                         <div class="p-2 w-28 font-semibold">Placeholder: </div>
                         <input 
                             type="text" 
-                            class="border block px-2 py-1 ml-1" 
+                            class="ml-2 rounded-md border block px-2 py-1 " 
                             name="placeholder" 
                             placeholder="Item placeholder.."
                             v-model="fieldValues.placeholder">
                     </div>
                     
-                    <div class="flex mt-1" v-if="newType != 'text'">
+                    <div class="flex mt-1 border pb-2 pr-2 pt-2 rounded" v-if="newType != 'text'">
                         <div class="p-2 w-28 font-semibold">Values: </div>
                         <div><ValueList v-on:update-val-list="handleValuesUpdate"></ValueList></div>
                     </div>
@@ -247,7 +247,7 @@ function handleDataChange(data){
             </div>
             <div class="block">
                 <button @click="addItem" 
-                    class="my-4 px-4 py-2 rounded-md bg-green-200 hover:bg-green-300 active:bg-green-400 transition"
+                    class="my-4 px-4 py-2 border border-green-300 rounded-md bg-green-200 hover:bg-green-300 active:bg-green-400 transition"
                 >Save Item
                 </button>
             
@@ -263,6 +263,6 @@ function handleDataChange(data){
         </label>
         <textarea id="jsoncode" class="w-4/5 h-52 m-auto border bg-green-100 p-2" placeholder="Generated code goes here..">{{ resultCode }}</textarea>
     </div>
-    <div>valuelist: {{ tempValList.map((data)=>data.stringval).join(', ') }}</div>
+    <!--<div>valuelist: {{ tempValList.map((data)=>data.stringval).join(', ') }}</div>-->
     
 </template>

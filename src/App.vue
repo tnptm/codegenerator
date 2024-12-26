@@ -3,13 +3,32 @@
 import Login from './components/Login.vue'
 import Generator from './components/Generator.vue';
 import { useAuthStore } from './stores/auth';
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 //const currentPage = ref('Login')
 
+
+//const title = ref("Code generator for tp-form configurator")
+const title = ref("")
+
+onMounted(()=>{
+  if (import.meta.env.DEV){
+    title.value = import.meta.env.VITE_APP_TITLE_DEV
+  } else {
+    title.value = import.meta.env.VITE_APP_TITLE
+  }
+})
+
+
+/*if (node.value == "dev"){
+  title.value = import.meta.env.VITE_TITLE_DEV
+}*/
+//process.env.VUE_APP_TITLE)
 const authStore = useAuthStore();
 
 const isLoggedIn = computed(()=> authStore.isLoggedIn)
+const usernm = computed(()=> authStore.userName)
+
 /*
 const currentPage = computed(()=>{
   return (isLoggedIn) ? "Generator" : "Login"
@@ -25,22 +44,25 @@ const handleSetLogin = (data) => {
 <template>
   <!--<div>Main app: logged {{ (isLoggedIn) ? 'in' : 'out' }}</div>-->
   <header class="p-4 bg-emerald-400 flex">
-    <div class="text-xl p-1 text-slate-700 font-bold">Code generator for tp-form configurator</div>
-    <button v-if="isLoggedIn" 
-      class="p-1 
-            bg-orange-100 
-            hover:bg-orange-200
-            transition 
-            outline-1 
-            active:outline-blue-400 
-            border 
-            border-black 
-            ml-auto 
-            rounded" 
-      @click="authStore.logout()"
-    >
-      Log out
-    </button>
+    <div class="text-xl p-1 text-slate-700 font-bold">{{ title }}</div>
+    <div class="ml-auto" v-if="isLoggedIn"><span class="mx-2 text-blue-600">{{ usernm }}</span>
+        <button  
+            class="py-1 
+                  bg-orange-100 
+                  hover:bg-orange-200
+                  transition 
+                  outline-1 
+                  active:outline-blue-400 
+                  border 
+                  border-orange-500
+                  shadow 
+                  rounded px-3" 
+            @click="authStore.logout()"
+          >
+            Log out
+      </button>
+    </div>
+    
   
   </header>
   <div v-if="isLoggedIn === true">
